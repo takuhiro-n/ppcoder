@@ -3,8 +3,9 @@ import React, { useState, useEffect, useMemo } from 'react';
 function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [correctAnswers, setCorrectAnswers] = useState(0); // 正解数を追跡するための状態を追加
   const [result, setResult] = useState('');
+  const [gameEnded, setGameEnded] = useState(false);
 
   const allQuestions = useMemo(() => [
     { prompt: "オブジェクトを複製したい", shortcut: 'd', description: 'Ctrl+D' },
@@ -23,42 +24,48 @@ function App() {
 
   useEffect(() => {
     if (!gameStarted) return;
-
+  
     const handleKeyDown = (event) => {
       event.preventDefault();
       if (event.key === 'Control') return;
-
-      const nextIndex = currentQuestionIndex + 1;
-
+  
+      // 現在の問題に対する回答を処理
       if (currentQuestionIndex < questions.length) {
         if (event.ctrlKey && event.key === questions[currentQuestionIndex].shortcut) {
-          setCorrectAnswers(prev => prev + 1);  // Increment only if within question limit
+          setCorrectAnswers(correctAnswers => correctAnswers + 1);  // 正解数を更新
           setResult('正解！');
         } else if (event.ctrlKey) {
           setResult('不正解');
         }
-      }
-
-      // Move to the next question or end the game
-      if (nextIndex <= questions.length) {
-        setCurrentQuestionIndex(nextIndex);
-      }
-      
-      if (nextIndex >= questions.length) {
-        setResult(`終了！あなたの正解数は${correctAnswers}です。`);
+  
+        // 次の問題へ進むか、すべての問題が終了した場合に結果を表示
+        const nextIndex = currentQuestionIndex + 1;
+        if (nextIndex < questions.length) {
+          setCurrentQuestionIndex(nextIndex);
+        } else {
+          setGameEnded(true);
+          setResult(`終了！あなたの正解数は${correctAnswers}です。`);  // ゲーム終了時に結果を表示
+        }
       }
     };
-
+  
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentQuestionIndex, correctAnswers, questions, gameStarted]);
+  }, [currentQuestionIndex, questions, gameStarted, correctAnswers]);
 
   const startGame = () => {
     setGameStarted(true);
+    setGameEnded(false);
     setCurrentQuestionIndex(0);
-    setCorrectAnswers(0);
+    setCorrectAnswers(0); // ゲーム開始時に正解数をリセット
+    setResult('');
+  };
+
+  const resetGame = () => {
+    setGameStarted(false);
+    setGameEnded(false);
     setResult('');
   };
 
@@ -66,12 +73,22 @@ function App() {
     <div className="App">
       <header className="App-header">
         <h1>PpCoder</h1>
-        {!gameStarted ? (
+        {!gameStarted && !gameEnded && (
           <button onClick={startGame}>ゲームをする</button>
-        ) : (
+        )}
+        {gameEnded && (
           <>
-            {currentQuestionIndex < questions.length && <p>問題: {questions[currentQuestionIndex].prompt}</p>}
             <p>{result}</p>
+            <button onClick={resetGame}>戻る</button>
+          </>
+        )}
+        {gameStarted && !gameEnded && (
+          <>
+            {currentQuestionIndex < questions.length ? (
+              <p>問題: {questions[currentQuestionIndex].prompt}</p>
+            ) : (
+              <p>{result}</p> // 全問題終了後には結果を表示
+            )}
           </>
         )}
       </header>

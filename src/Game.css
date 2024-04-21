@@ -1,0 +1,9 @@
+/* Game.css */
+.correct-answer-animation {
+    animation: correctAnswerFlash 0.5s ease-out;
+}
+
+@keyframes correctAnswerFlash {
+    from { background-color: green; }
+    to { background-color: transparent; }
+}

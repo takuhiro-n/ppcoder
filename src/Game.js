@@ -1,11 +1,11 @@
 // Game.js
 import React, { useState, useEffect } from 'react';
+
 import { Link } from "react-router-dom";
 import './Game.css'; // Game.css ファイルをインポートする
 import questions from './questions'; // questions.js から questions 配列をインポート
 import { getQuestions } from './questionsService';  // シャッフル関数をインポート
-
-
+import { createGameScore } from './graphql/mutations'; 
 
 function Game() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -17,9 +17,7 @@ function Game() {
 
     useEffect(() => {
         setCurrentQuestions(getQuestions(questions));
-    }, []);
-
-    
+    }, []);    
 
     //正解時のエフェクト用
     const [showCorrectAnswerAnimation, setShowCorrectAnswerAnimation] = useState(false);
@@ -125,12 +123,17 @@ function Game() {
 
     return (
         <div>
-            <h1>{displayMessage}</h1>
-            {currentQuestionIndex < currentQuestions.length && (
+            <h1>{currentQuestionIndex < numberOfQuestions ? "" : `ゲーム終了。正解数: ${correctAnswers}/${numberOfQuestions}`}</h1>
+            {currentQuestionIndex < numberOfQuestions ? (
                 <div>
-                    <p>{currentQuestions[currentQuestionIndex].question}</p>
-                    <p className={showCorrectAnswerAnimation ? "correct-answer-animation" : ""}>{currentQuestionIndex+1}/{currentQuestions.length}</p>
+                    <p>{questions[currentQuestionIndex].question}</p>
+                    <p className={showCorrectAnswerAnimation ? "correct-answer-animation" : ""}>{currentQuestionIndex+1}/{numberOfQuestions}</p>
                 </div>
+            ) : (
+                <form>
+                    <input type="text" value={"playerName"} placeholder="Enter your name" />
+                    <button type="submit">Submit Score</button>
+                </form>
             )}
             <Link to="/"><button>ホームに戻る</button></Link>
         </div>

@@ -1,0 +1,20 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-ppcoder-dev-8fe41-authRole",
+      "UnauthRoleArn": "arn:aws:iam::730335405533:role/amplify-ppcoder-dev-8fe41-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::730335405533:role/amplify-ppcoder-dev-8fe41-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-ppcoder-dev-8fe41-deployment",
+      "UnauthRoleName": "amplify-ppcoder-dev-8fe41-unauthRole",
+      "StackName": "amplify-ppcoder-dev-8fe41",
+      "StackId": "arn:aws:cloudformation:us-east-1:730335405533:stack/amplify-ppcoder-dev-8fe41/17032bc0-087e-11ef-ad44-128699f3d333",
+      "AmplifyAppId": "d3n08h2iauqzc3"
+    },
+    "categories": {
+      "api": {
+        "ppcoder": {}
+      }
+    }
+  }
+}

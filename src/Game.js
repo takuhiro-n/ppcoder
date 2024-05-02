@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import './Game.css'; // Game.css ファイルをインポートする
 import questions from './questions'; // questions.js から questions 配列をインポート
+import { getQuestions } from './questionsService';  // シャッフル関数をインポート
 
 
 
@@ -10,8 +11,15 @@ function Game() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [correctAnswers, setCorrectAnswers] = useState(0);
     const [keysPressed, setKeysPressed] = useState(new Set());
-    const numberOfQuestions = 3;
+    const numberOfQuestions = 2;
     const keysPressedCounter = new Set(); //押したキーの数を数える
+    const [currentQuestions, setCurrentQuestions] = useState([]);
+
+    useEffect(() => {
+        setCurrentQuestions(getQuestions(questions));
+    }, []);
+
+    
 
     //正解時のエフェクト用
     const [showCorrectAnswerAnimation, setShowCorrectAnswerAnimation] = useState(false);
@@ -111,20 +119,20 @@ function Game() {
         };
     }, [currentQuestionIndex, correctAnswers]);  // 依存関係に currentQuestionIndex と correctAnswers を追加
 
-    const displayMessage = currentQuestionIndex < numberOfQuestions ? "" : `ゲーム終了。正解数: ${correctAnswers}/${numberOfQuestions}`;
+    const displayMessage = currentQuestionIndex < currentQuestions.length ? "" : `ゲーム終了。正解数: ${correctAnswers}/${currentQuestions.length}`;
+
     
 
     return (
         <div>
             <h1>{displayMessage}</h1>
-            {currentQuestionIndex < numberOfQuestions && (
+            {currentQuestionIndex < currentQuestions.length && (
                 <div>
-                    <p>{questions[currentQuestionIndex].question}</p>
-                    <p className={showCorrectAnswerAnimation ? "correct-answer-animation" : ""}>{currentQuestionIndex+1}/{numberOfQuestions}</p>
+                    <p>{currentQuestions[currentQuestionIndex].question}</p>
+                    <p className={showCorrectAnswerAnimation ? "correct-answer-animation" : ""}>{currentQuestionIndex+1}/{currentQuestions.length}</p>
                 </div>
             )}
             <Link to="/"><button>ホームに戻る</button></Link>
-
         </div>
     );
 }
